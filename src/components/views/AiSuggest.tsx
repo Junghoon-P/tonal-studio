@@ -1,7 +1,10 @@
 'use client';
 
 import type { JSX } from 'react';
+import { useStudio } from '@/components/StudioContext';
 import { Chip } from '@/components/ui/Chip';
+import { MoodKeywords } from '@/components/views/MoodKeywords';
+import { useMoodKeywords } from '@/hooks/useMoodKeywords';
 import {
   ICON_CHECK,
   ICON_KEY,
@@ -22,7 +25,7 @@ interface AiSuggestProps {
   onAiPrompt: (value: string) => void;
   aiBusy: boolean;
   aiMsg: AiMsg | null;
-  onRunAI: () => void;
+  onRunAI: (mood: string) => void;
 }
 
 const KeyIcon = ({ d }: { d: string }): JSX.Element => (
@@ -72,7 +75,13 @@ export const AiSuggest = ({
   aiMsg,
   onRunAI,
 }: AiSuggestProps): JSX.Element => {
+  const { announce } = useStudio();
   const valid = keyPhase === 'valid';
+  const keywords = useMoodKeywords(valid, announce);
+  // 최종 무드 = 선택 키워드들 + 자유 입력 텍스트
+  const mood = [...keywords.selected, aiPrompt.trim()]
+    .filter(Boolean)
+    .join(', ');
   const badge = valid ? (
     <Chip tone="ok" text="연결됨" iconD={ICON_CHECK} size="md" />
   ) : keyPhase === 'error' && keyErrKind === 'auth' ? (
@@ -122,6 +131,17 @@ export const AiSuggest = ({
           <label htmlFor="ai-mood" className="text-[0.8125rem] font-semibold text-tx">
             브랜드 무드
           </label>
+          <MoodKeywords
+            selected={keywords.selected}
+            extra={keywords.extra}
+            busy={keywords.busy}
+            disabled={aiBusy}
+            onToggle={keywords.toggle}
+          />
+          <p className="m-0 text-xs leading-[1.55] text-tx3">
+            키워드를 고르면 AI가 더 세부적인 연관 키워드를 이어서 제안합니다.
+            직접 입력과 함께 조합됩니다.
+          </p>
           <input
             id="ai-mood"
             type="text"
@@ -134,7 +154,7 @@ export const AiSuggest = ({
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              onClick={onRunAI}
+              onClick={(): void => onRunAI(mood)}
               disabled={aiBusy}
               className={cx(BTN_PRIMARY, 'px-4 text-[0.875rem]')}
             >

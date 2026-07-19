@@ -184,16 +184,16 @@ export const TonalStudio = (): JSX.Element => {
     setAnnounce('대화상자 닫힘');
   };
 
-  const runAI = async (): Promise<void> => {
+  const runAI = async (moodInput?: string): Promise<void> => {
     const key = getStoredKey();
     if (!key) {
       openKey();
       return;
     }
-    const mood = aiPrompt.trim();
+    const mood = (moodInput ?? aiPrompt).trim();
     if (!mood) {
-      setAiMsg({ kind: 'warn', text: '무드를 한 줄 입력하세요 — 예: 차분한 핀테크, 정밀함' });
-      setAnnounce('무드 설명이 필요합니다');
+      setAiMsg({ kind: 'warn', text: '키워드를 고르거나 무드를 한 줄 입력하세요 — 예: 차분한 핀테크' });
+      setAnnounce('무드 키워드 또는 설명이 필요합니다');
       return;
     }
     setAiBusy(true);
@@ -304,7 +304,7 @@ export const TonalStudio = (): JSX.Element => {
                 onAiPrompt={setAiPrompt}
                 aiBusy={aiBusy}
                 aiMsg={aiMsg}
-                onRunAI={(): void => void runAI()}
+                onRunAI={(mood): void => void runAI(mood)}
                 onInspect={inspectToken}
                 overriddenKeys={overriddenKeys}
                 onResetOverrides={resetOverrides}

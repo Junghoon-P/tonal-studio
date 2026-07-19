@@ -29,7 +29,7 @@ interface PaletteViewProps {
   onAiPrompt: (value: string) => void;
   aiBusy: boolean;
   aiMsg: AiMsg | null;
-  onRunAI: () => void;
+  onRunAI: (mood: string) => void;
   onInspect: (key: PaletteKey) => void;
   overriddenKeys: PaletteKey[];
   onResetOverrides: () => void;

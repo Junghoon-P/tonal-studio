@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getStoredKey, removeStoredKey, storeKey } from './keyStorage';
+import { suggestKeywords } from './suggestKeywords';
 import { suggestPalette } from './suggestPalette';
 import { KEY_FORMAT, verifyOpenAiKey } from './verifyKey';
 
@@ -79,6 +80,42 @@ describe('suggestPalette', () => {
   it('파싱 불가 응답은 network 오류로 처리한다', async () => {
     mockFetch(200, { choices: [{ message: { content: 'not-json' } }] });
     const res = await suggestPalette(VALID_KEY, '무드');
+    expect(res).toEqual({ ok: false, error: 'network' });
+  });
+});
+
+describe('suggestKeywords', () => {
+  it('공백 정리·길이 필터 후 최대 5개만 반환한다', async () => {
+    mockFetch(200, {
+      choices: [
+        {
+          message: {
+            content:
+              '{"keywords":[" 노을빛 ","크래프트","","베이지 톤","우드","세리프","여섯번째"]}',
+          },
+        },
+      ],
+    });
+    const res = await suggestKeywords(VALID_KEY, ['따뜻한']);
+    expect(res).toEqual({
+      ok: true,
+      value: ['노을빛', '크래프트', '베이지 톤', '우드', '세리프'],
+    });
+  });
+
+  it.each([
+    [401, 'auth'],
+    [429, 'quota'],
+    [500, 'network'],
+  ])('HTTP %i → 오류 %s', async (status, error) => {
+    mockFetch(status);
+    const res = await suggestKeywords(VALID_KEY, ['테크']);
+    expect(res).toEqual({ ok: false, error });
+  });
+
+  it('파싱 불가 응답은 network 오류로 처리한다', async () => {
+    mockFetch(200, { choices: [{ message: { content: 'oops' } }] });
+    const res = await suggestKeywords(VALID_KEY, ['테크']);
     expect(res).toEqual({ ok: false, error: 'network' });
   });
 });
