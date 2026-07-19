@@ -37,7 +37,13 @@ export const CheckView = ({
       </p>
     </div>
     <div className="flex flex-wrap items-start gap-5">
-      <ContrastChecker ckFg={ckFg} ckBg={ckBg} onCkFg={onCkFg} onCkBg={onCkBg} />
+      <ContrastChecker
+        ckFg={ckFg}
+        ckBg={ckBg}
+        onCkFg={onCkFg}
+        onCkBg={onCkBg}
+        sim={sim}
+      />
       <CvdSimulation sim={sim} onSim={onSim} />
       <MatrixTable />
     </div>

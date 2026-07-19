@@ -7,6 +7,7 @@ import { PreviewCard } from '@/components/views/PreviewCard';
 import { TokenTable } from '@/components/views/TokenTable';
 import { CARD, CARD_TITLE, cx, SEG_BASE, SEG_GROUP, SEG_ON } from '@/components/ui/styles';
 import { hueName } from '@/lib/color/hueName';
+import type { PaletteKey } from '@/lib/color/types';
 import type { KeyErrorKind } from '@/lib/openai/verifyKey';
 import type { KeyPhase } from '@/hooks/useApiKey';
 
@@ -29,6 +30,7 @@ interface PaletteViewProps {
   aiBusy: boolean;
   aiMsg: AiMsg | null;
   onRunAI: () => void;
+  onInspect: (key: PaletteKey) => void;
 }
 
 const warmLabel = (warm: number): string => {
@@ -54,6 +56,7 @@ export const PaletteView = ({
   aiBusy,
   aiMsg,
   onRunAI,
+  onInspect,
 }: PaletteViewProps): JSX.Element => {
   const { hc, aaa } = useStudio();
   return (
@@ -170,7 +173,7 @@ export const PaletteView = ({
             설정에서도 기준 미달 토큰은 생성되지 않습니다.
           </p>
         </div>
-        <TokenTable />
+        <TokenTable onInspect={onInspect} />
         <div className="flex max-w-[420px] flex-[1.2_1_300px] flex-col gap-5">
           <PreviewCard />
         </div>

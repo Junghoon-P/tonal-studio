@@ -52,7 +52,11 @@ const buildRows = (p: Palette, hc: boolean, T: number): Row[] => {
   ];
 };
 
-export const TokenTable = (): JSX.Element => {
+interface TokenTableProps {
+  onInspect: (key: PaletteKey) => void;
+}
+
+export const TokenTable = ({ onInspect }: TokenTableProps): JSX.Element => {
   const { palette, dark, hc, aaa, target } = useStudio();
   const themeName = `${dark ? '다크' : '라이트'}${hc ? ' · 고대비' : ''}`;
   const targetLabel = `${target}:1${aaa || hc ? ' (AAA)' : ' (AA)'}`;
@@ -121,6 +125,19 @@ export const TokenTable = (): JSX.Element => {
                     <span className="mt-1 block text-xs text-tx3">
                       {row.reqLabel}
                     </span>
+                    {row.ratio !== null && (
+                      <button
+                        type="button"
+                        onClick={(): void => onInspect(row.key)}
+                        className="mt-0.5 inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-lg border border-transparent bg-transparent px-1 text-xs font-semibold text-acT underline underline-offset-2 transition-colors hover:bg-sf2"
+                      >
+                        크게 검사
+                        <span className="sr-only">
+                          {' '}
+                          — {tokenLabel(row.key)} 토큰을 확대 검사기에서 열기
+                        </span>
+                      </button>
+                    )}
                   </td>
                 </tr>
               ),

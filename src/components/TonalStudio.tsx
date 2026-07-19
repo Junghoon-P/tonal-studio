@@ -28,6 +28,7 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useTheme } from '@/hooks/useTheme';
 import { hueName } from '@/lib/color/hueName';
 import { buildPalette } from '@/lib/color/palette';
+import { tokenLabel } from '@/lib/color/tokenMeta';
 import { PALETTE_KEYS, type PaletteKey } from '@/lib/color/types';
 import { buildExportCode, type ExportTab } from '@/lib/export/codegen';
 import { getStoredKey } from '@/lib/openai/keyStorage';
@@ -96,6 +97,21 @@ export const TonalStudio = (): JSX.Element => {
     onToggleDark: toggleDark,
     onToggleHc: toggleHc,
   });
+
+  // 토큰 테이블의 "크게 검사" — 해당 토큰을 미리 선택한 채 확대 검사기로 이동
+  const inspectToken = (key: PaletteKey): void => {
+    if (key === 'bg' || key === 'sf' || key === 'sf2') {
+      setCkBg(key);
+    } else if (key === 'ac') {
+      setCkFg('oac');
+      setCkBg('ac');
+    } else {
+      setCkFg(key);
+    }
+    setView('check');
+    setAnnounce(`${tokenLabel(key)} 토큰 확대 검사로 이동`);
+    focusHeading(VIEW_HEADING_ID.check);
+  };
 
   const openKey = (): void => {
     setKeyModal(true);
@@ -221,6 +237,7 @@ export const TonalStudio = (): JSX.Element => {
                 aiBusy={aiBusy}
                 aiMsg={aiMsg}
                 onRunAI={(): void => void runAI()}
+                onInspect={inspectToken}
               />
             )}
             {view === 'check' && (
