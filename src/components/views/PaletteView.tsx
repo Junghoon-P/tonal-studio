@@ -64,9 +64,14 @@ export const PaletteView = ({
 }: PaletteViewProps): JSX.Element => {
   const { hc, aaa } = useStudio();
   return (
-    <section aria-labelledby="h-palette">
-      <div className="flex flex-wrap items-stretch gap-5">
-        <div className={cx('flex max-w-[340px] flex-[1_1_240px] flex-col gap-5', CARD)}>
+    <section aria-labelledby="h-palette" className="h-full">
+      <div className="flex h-full flex-wrap items-stretch gap-5">
+        <div
+          className={cx(
+            'flex min-h-0 max-w-[340px] flex-[1_1_240px] flex-col gap-5 overflow-y-auto',
+            CARD,
+          )}
+        >
           <h3 className={CARD_TITLE}>생성 설정</h3>
           <div>
             <div className="flex items-baseline justify-between gap-2">

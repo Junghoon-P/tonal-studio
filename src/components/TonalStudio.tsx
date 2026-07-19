@@ -278,11 +278,14 @@ export const TonalStudio = (): JSX.Element => {
             setAnnounce(!notes ? '설계 주석 표시' : '설계 주석 숨김');
           }}
         />
-        <main id="main" className="min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-[1600px] px-[clamp(1rem,3vw,2rem)] pb-8 pt-6">
+        <main
+          id="main"
+          className="min-h-0 flex-1 overflow-y-auto lg:overflow-hidden"
+        >
+          <div className="mx-auto flex w-full max-w-[1600px] flex-col px-[clamp(1rem,3vw,2rem)] pb-4 pt-6 lg:h-full">
           <ViewTitle view={view} />
-          <div className="flex flex-wrap items-start gap-6">
-          <div className="min-w-0 flex-[1_1_640px]">
+          <div className="flex min-h-0 flex-1 flex-wrap items-stretch gap-6">
+          <div className="min-h-0 min-w-0 flex-[1_1_640px]">
             {view === 'palette' && (
               <PaletteView
                 hue={hue}

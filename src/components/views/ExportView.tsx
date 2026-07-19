@@ -100,9 +100,11 @@ export const ExportView = ({
   ];
   const code = buildExportCode(tab, { hue, warm, aaa }, override);
   return (
-    <section aria-labelledby="h-export">
-      <div className="flex flex-wrap items-stretch gap-5">
-        <div className={cx('min-w-0 flex-[1_1_360px]', CARD)}>
+    <section aria-labelledby="h-export" className="h-full">
+      <div className="flex h-full flex-wrap items-stretch gap-5">
+        <div
+          className={cx('min-h-0 min-w-0 flex-[1_1_360px] overflow-y-auto', CARD)}
+        >
           <h3 className={cx(CARD_TITLE, 'mb-4')}>
             검증 리포트 — WCAG 2.2 · {themeName}
           </h3>
@@ -128,7 +130,9 @@ export const ExportView = ({
             ))}
           </ul>
         </div>
-        <div className={cx('flex min-w-0 flex-[1.4_1_420px] flex-col', CARD)}>
+        <div
+          className={cx('flex min-h-0 min-w-0 flex-[1.4_1_420px] flex-col', CARD)}
+        >
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div role="group" aria-label="내보내기 형식" className={SEG_GROUP}>
               {TABS.map(([id, label]) => (
@@ -165,7 +169,7 @@ export const ExportView = ({
               {copied ? '복사됨 ✓' : '클립보드에 복사'}
             </button>
           </div>
-          <pre className="m-0 max-h-[30rem] min-h-0 flex-1 overflow-auto rounded-[10px] border border-bd bg-sf2 p-4 font-mono text-[0.8125rem] leading-[1.6] text-tx">
+          <pre className="m-0 min-h-0 flex-1 overflow-auto rounded-[10px] border border-bd bg-sf2 p-4 font-mono text-[0.8125rem] leading-[1.6] text-tx">
             <code>{code}</code>
           </pre>
         </div>

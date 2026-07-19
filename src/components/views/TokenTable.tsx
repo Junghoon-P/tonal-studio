@@ -70,7 +70,7 @@ export const TokenTable = ({
   const themeName = `${dark ? '다크' : '라이트'}${hc ? ' · 고대비' : ''}`;
   const targetLabel = `${target}:1${aaa || hc ? ' (AAA)' : ' (AA)'}`;
   return (
-    <div className={cx('min-w-0 flex-[2.2_1_420px]', CARD)}>
+    <div className={cx('flex min-h-0 min-w-0 flex-[2.2_1_420px] flex-col', CARD)}>
       <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
         <h3 className={CARD_TITLE}>시맨틱 토큰</h3>
         <span className="font-mono text-[0.8125rem] text-tx2">
@@ -92,7 +92,7 @@ export const TokenTable = ({
           </button>
         </div>
       )}
-      <div className="overflow-x-auto">
+      <div className="min-h-0 flex-1 overflow-auto">
         <table className="w-full min-w-[30rem] border-collapse">
           <caption className="sr-only">
             생성된 시맨틱 컬러 토큰과 각 토큰의 대비 검증 결과

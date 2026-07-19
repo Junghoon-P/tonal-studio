@@ -20,8 +20,8 @@ export const SpecView = (): JSX.Element => {
     { label: '포커스 링 · --focus-ring/--bg', ratio: r(palette.fc.hex, palette.bg.hex), required: hc ? 4.5 : 3 },
   ];
   return (
-    <section aria-labelledby="h-spec">
-      <div className={cx('mb-5', CARD)}>
+    <section aria-labelledby="h-spec" className="flex h-full flex-col">
+      <div className={cx('mb-5 flex-none', CARD)}>
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
           <h3 className={CARD_TITLE}>대비 실측 — 현재 테마</h3>
           <span className="text-[0.8125rem] text-tx3">
@@ -40,7 +40,7 @@ export const SpecView = (): JSX.Element => {
           ))}
         </ul>
       </div>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(20rem,100%),1fr))] gap-5">
+      <div className="grid min-h-0 flex-1 grid-cols-[repeat(auto-fill,minmax(min(20rem,100%),1fr))] gap-5 overflow-y-auto">
         {SPEC_CARDS.map((card) => (
           <article key={card.n} className={cx('flex flex-col gap-3.5', CARD)}>
             <div className="flex flex-wrap items-baseline gap-2.5">

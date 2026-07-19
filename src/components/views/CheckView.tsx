@@ -30,19 +30,21 @@ export const CheckView = ({
   overriddenCount,
   onResetOverrides,
 }: CheckViewProps): JSX.Element => (
-  <section aria-labelledby="h-check">
-    <div className="flex flex-wrap items-stretch gap-5">
-      <ContrastChecker
-        ckFg={ckFg}
-        ckBg={ckBg}
-        onCkFg={onCkFg}
-        onCkBg={onCkBg}
-        sim={sim}
-        onApplySuggestion={onApplySuggestion}
-        overriddenCount={overriddenCount}
-        onResetOverrides={onResetOverrides}
-      />
-      <CvdSimulation sim={sim} onSim={onSim} />
+  <section aria-labelledby="h-check" className="h-full">
+    <div className="flex h-full flex-col gap-5">
+      <div className="flex min-h-0 flex-[3_1_0] flex-wrap items-stretch gap-5">
+        <ContrastChecker
+          ckFg={ckFg}
+          ckBg={ckBg}
+          onCkFg={onCkFg}
+          onCkBg={onCkBg}
+          sim={sim}
+          onApplySuggestion={onApplySuggestion}
+          overriddenCount={overriddenCount}
+          onResetOverrides={onResetOverrides}
+        />
+        <CvdSimulation sim={sim} onSim={onSim} />
+      </div>
       <MatrixTable />
     </div>
   </section>

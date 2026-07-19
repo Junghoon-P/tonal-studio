@@ -39,7 +39,12 @@ export const CvdSimulation = ({ sim, onSim }: CvdSimulationProps): JSX.Element =
   const filterStyle: CSSProperties =
     sim === 'none' ? {} : { filter: `url(#cvd-${sim})` };
   return (
-    <div className={cx('flex min-w-0 flex-[1_1_420px] flex-col', CARD)}>
+    <div
+      className={cx(
+        'flex min-h-0 min-w-0 flex-[1_1_420px] flex-col overflow-y-auto',
+        CARD,
+      )}
+    >
       <h3 className={cx(CARD_TITLE, 'mb-1.5')}>색각 시뮬레이션</h3>
       <fieldset className="mb-4 flex flex-wrap gap-x-5 gap-y-0.5 border-0 p-0">
         <legend className="sr-only">색각 시뮬레이션 유형 선택</legend>

@@ -38,7 +38,7 @@ export const MatrixTable = (): JSX.Element => {
   const min = Math.min(...rows.flatMap((row) => row.cells.map((c) => c.ratio)));
   const allPass = min >= 4.5;
   return (
-    <div className={cx('flex-[1_1_100%]', CARD)}>
+    <div className={cx('flex min-h-0 flex-[2_1_0] flex-col', CARD)}>
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
         <h3 className={CARD_TITLE}>전 조합 매트릭스 — 텍스트 × 표면</h3>
         <Chip
@@ -46,7 +46,7 @@ export const MatrixTable = (): JSX.Element => {
           text={`21쌍 최저 ${formatRatio(min)}:1`}
         />
       </div>
-      <div className="overflow-x-auto">
+      <div className="min-h-0 flex-1 overflow-auto">
         <table className="w-full min-w-[34rem] border-collapse">
           <caption className="sr-only">
             모든 텍스트 토큰과 표면 토큰 조합의 대비 비율

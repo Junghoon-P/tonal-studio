@@ -14,7 +14,12 @@ import {
 
 // 생성된 토큰만으로 그린 샘플 UI — 상태는 색이 아니라 아이콘·라벨·명도로 구분
 export const PreviewCard = (): JSX.Element => (
-  <div className={cx('flex max-w-[420px] flex-[1.2_1_300px] flex-col', CARD)}>
+  <div
+    className={cx(
+      'flex min-h-0 max-w-[420px] flex-[1.2_1_300px] flex-col overflow-y-auto',
+      CARD,
+    )}
+  >
     <h3 className={cx(CARD_TITLE, 'mb-4')}>라이브 미리보기</h3>
     <div className="rounded-[10px] border border-bd bg-bg p-5 transition-colors">
       <h4 className="m-0 text-[1.0625rem] font-bold tracking-[-0.01em] text-tx">
