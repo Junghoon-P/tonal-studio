@@ -1,8 +1,10 @@
 'use client';
 
-import type { CSSProperties, JSX } from 'react';
+import { useState, type CSSProperties, type JSX } from 'react';
 import { useStudio } from '@/components/StudioContext';
+import { SwatchZoom } from '@/components/SwatchZoom';
 import { Chip } from '@/components/ui/Chip';
+import { MagnifierHint } from '@/components/ui/MagnifierHint';
 import { ICON_CHECK, ICON_WARN, ICON_X } from '@/components/ui/icons';
 import { CARD, CARD_TITLE, cx } from '@/components/ui/styles';
 import { statusLightnessGap } from '@/lib/color/statusGap';
@@ -29,6 +31,7 @@ interface CvdSimulationProps {
 
 export const CvdSimulation = ({ sim, onSim }: CvdSimulationProps): JSX.Element => {
   const { palette, announce } = useStudio();
+  const [zoomKey, setZoomKey] = useState<PaletteKey | null>(null);
   const okL = Math.round(palette.okT.L * 100);
   const wnL = Math.round(palette.wnT.L * 100);
   const dgL = Math.round(palette.dgT.L * 100);
@@ -60,14 +63,19 @@ export const CvdSimulation = ({ sim, onSim }: CvdSimulationProps): JSX.Element =
         ))}
       </fieldset>
       <div className="flex-1 pt-1" style={filterStyle}>
-        <div className="flex flex-wrap gap-2.5" aria-hidden="true">
+        <div className="flex flex-wrap gap-2.5">
           {STRIP_KEYS.map((key) => (
             <span key={key} className="flex flex-col items-center gap-1.5">
-              <span
-                className="inline-block h-[3.75rem] w-[3.75rem] rounded-[10px] border border-bd"
+              <button
+                type="button"
+                aria-label={`${tokenLabel(key)} 색상 크게 보기`}
+                onClick={(): void => setZoomKey(key)}
+                className="group relative h-[3.75rem] w-[3.75rem] cursor-pointer rounded-[10px] border border-bd transition-transform hover:scale-105"
                 style={{ background: palette[key].hex }}
-              />
-              <span className="font-mono text-[0.8125rem] text-tx3">
+              >
+                <MagnifierHint size={28} />
+              </button>
+              <span aria-hidden="true" className="font-mono text-[0.8125rem] text-tx3">
                 {tokenLabel(key).replace('--', '')}
               </span>
             </span>
@@ -93,6 +101,14 @@ export const CvdSimulation = ({ sim, onSim }: CvdSimulationProps): JSX.Element =
           <Chip tone="danger" text={`오류 L${dgL}`} iconD={ICON_X} size="md" />
         </div>
       </div>
+      {zoomKey && (
+        <SwatchZoom
+          token={palette[zoomKey]}
+          label={tokenLabel(zoomKey)}
+          filter={sim === 'none' ? undefined : { filter: `url(#cvd-${sim})` }}
+          onClose={(): void => setZoomKey(null)}
+        />
+      )}
       <p className="mb-0 mt-4 border-t border-bd pt-3.5 text-[0.8125rem] leading-[1.55] text-tx2">
         상태 색상은 청록·호박·주홍 축(Okabe-Ito 계열)이며 명도 간격 {lGapText}를
         유지합니다. 시뮬레이션은 근사치 — 진짜 안전장치는 색에 의존하지 않는

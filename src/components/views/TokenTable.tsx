@@ -1,8 +1,10 @@
 'use client';
 
-import type { JSX } from 'react';
+import { useState, type JSX } from 'react';
 import { useStudio } from '@/components/StudioContext';
+import { SwatchZoom } from '@/components/SwatchZoom';
 import { Chip, RatioChip } from '@/components/ui/Chip';
+import { MagnifierHint } from '@/components/ui/MagnifierHint';
 import { CARD, CARD_TITLE, cx, TH_COL } from '@/components/ui/styles';
 import { contrastRatio } from '@/lib/color/contrast';
 import { tokenLabel } from '@/lib/color/tokenMeta';
@@ -58,6 +60,7 @@ interface TokenTableProps {
 
 export const TokenTable = ({ onInspect }: TokenTableProps): JSX.Element => {
   const { palette, dark, hc, aaa, target } = useStudio();
+  const [zoomKey, setZoomKey] = useState<PaletteKey | null>(null);
   const themeName = `${dark ? '다크' : '라이트'}${hc ? ' · 고대비' : ''}`;
   const targetLabel = `${target}:1${aaa || hc ? ' (AAA)' : ' (AA)'}`;
   return (
@@ -107,10 +110,15 @@ export const TokenTable = ({ onInspect }: TokenTableProps): JSX.Element => {
                   </th>
                   <td className="border-b border-bd px-3 py-2 align-top">
                     <span className="inline-flex items-center gap-2">
-                      <span
-                        className="inline-block h-7 w-7 flex-none rounded-md border border-bd"
+                      <button
+                        type="button"
+                        aria-label={`${tokenLabel(row.key)} ${palette[row.key].hex} 색상 크게 보기`}
+                        onClick={(): void => setZoomKey(row.key)}
+                        className="group relative h-11 w-11 flex-none cursor-pointer rounded-lg border border-bd transition-transform hover:scale-105"
                         style={{ background: palette[row.key].hex }}
-                      />
+                      >
+                        <MagnifierHint />
+                      </button>
                       <span className="font-mono text-[0.8125rem] text-tx">
                         {palette[row.key].hex}
                       </span>
@@ -145,6 +153,13 @@ export const TokenTable = ({ onInspect }: TokenTableProps): JSX.Element => {
           </tbody>
         </table>
       </div>
+      {zoomKey && (
+        <SwatchZoom
+          token={palette[zoomKey]}
+          label={tokenLabel(zoomKey)}
+          onClose={(): void => setZoomKey(null)}
+        />
+      )}
     </div>
   );
 };
