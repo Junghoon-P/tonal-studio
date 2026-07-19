@@ -101,9 +101,12 @@ export const ExportView = ({
   const code = buildExportCode(tab, { hue, warm, aaa }, override);
   return (
     <section aria-labelledby="h-export" className="h-full">
-      <div className="flex h-full flex-wrap items-stretch gap-5">
+      <div className="flex flex-col gap-5 lg:h-full lg:flex-row lg:items-stretch">
         <div
-          className={cx('min-h-0 min-w-0 flex-[1_1_360px] overflow-y-auto', CARD)}
+          className={cx(
+            'min-h-0 min-w-0 overflow-y-auto lg:flex-[1_1_360px]',
+            CARD,
+          )}
         >
           <h3 className={cx(CARD_TITLE, 'mb-4')}>
             검증 리포트 — WCAG 2.2 · {themeName}
@@ -131,7 +134,10 @@ export const ExportView = ({
           </ul>
         </div>
         <div
-          className={cx('flex min-h-0 min-w-0 flex-[1.4_1_420px] flex-col', CARD)}
+          className={cx(
+            'flex min-h-0 min-w-0 flex-col lg:flex-[1.4_1_420px]',
+            CARD,
+          )}
         >
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div role="group" aria-label="내보내기 형식" className={SEG_GROUP}>

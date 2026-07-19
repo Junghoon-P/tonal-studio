@@ -116,7 +116,12 @@ export const ContrastChecker = ({
   const sampleFilter: CSSProperties =
     sim === 'none' ? {} : { filter: `url(#cvd-${sim})` };
   return (
-    <div className={cx('min-h-0 min-w-0 flex-[1.4_1_460px] overflow-y-auto', CARD)}>
+    <div
+      className={cx(
+        'min-h-0 min-w-0 overflow-y-auto lg:flex-[1.4_1_460px]',
+        CARD,
+      )}
+    >
       <h3 className={cx(CARD_TITLE, 'mb-4')}>확대 검사기</h3>
       <div className="flex flex-wrap gap-3">
         <div className="flex-[1_1_13rem]">

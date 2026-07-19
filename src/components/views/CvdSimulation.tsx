@@ -41,7 +41,7 @@ export const CvdSimulation = ({ sim, onSim }: CvdSimulationProps): JSX.Element =
   return (
     <div
       className={cx(
-        'flex min-h-0 min-w-0 flex-[1_1_420px] flex-col overflow-y-auto',
+        'flex min-h-0 min-w-0 flex-col overflow-y-auto lg:flex-[1_1_420px]',
         CARD,
       )}
     >

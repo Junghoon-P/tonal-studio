@@ -242,7 +242,7 @@ export const TonalStudio = (): JSX.Element => {
     >
       <div
         style={cssVars}
-        className="flex h-dvh flex-col overflow-hidden bg-bg font-sans text-base leading-normal tracking-[-0.011em] text-tx transition-colors"
+        className="relative flex h-dvh flex-col overflow-hidden bg-bg font-sans text-base leading-normal tracking-[-0.011em] text-tx transition-colors"
       >
         <svg aria-hidden="true" focusable="false" className="absolute h-0 w-0 overflow-hidden">
           <defs>
@@ -282,10 +282,10 @@ export const TonalStudio = (): JSX.Element => {
           id="main"
           className="min-h-0 flex-1 overflow-y-auto lg:overflow-hidden"
         >
-          <div className="mx-auto flex w-full max-w-[1600px] flex-col px-[clamp(1rem,3vw,2rem)] pb-4 pt-6 lg:h-full">
+          <div className="mx-auto flex min-h-0 w-full max-w-[1600px] flex-col px-[clamp(1rem,3vw,2rem)] pb-4 pt-6 lg:h-full">
           <ViewTitle view={view} />
-          <div className="flex min-h-0 flex-1 flex-wrap items-stretch gap-6">
-          <div className="min-h-0 min-w-0 flex-[1_1_640px]">
+          <div className="flex min-h-0 flex-1 flex-col gap-6 lg:flex-row lg:items-stretch">
+          <div className="min-h-0 min-w-0 lg:flex-1">
             {view === 'palette' && (
               <PaletteView
                 hue={hue}

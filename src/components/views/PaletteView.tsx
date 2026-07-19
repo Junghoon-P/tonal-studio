@@ -65,10 +65,10 @@ export const PaletteView = ({
   const { hc, aaa } = useStudio();
   return (
     <section aria-labelledby="h-palette" className="h-full">
-      <div className="flex h-full flex-wrap items-stretch gap-5">
+      <div className="flex flex-col gap-5 lg:h-full lg:flex-row lg:items-stretch">
         <div
           className={cx(
-            'flex min-h-0 max-w-[340px] flex-[1_1_240px] flex-col gap-5 overflow-y-auto',
+            'flex min-h-0 flex-col gap-5 overflow-y-auto lg:max-w-[340px] lg:flex-[1_1_240px]',
             CARD,
           )}
         >

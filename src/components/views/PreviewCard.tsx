@@ -16,7 +16,7 @@ import {
 export const PreviewCard = (): JSX.Element => (
   <div
     className={cx(
-      'flex min-h-0 max-w-[420px] flex-[1.2_1_300px] flex-col overflow-y-auto',
+      'flex min-h-0 flex-col overflow-y-auto lg:max-w-[420px] lg:flex-[1.2_1_300px]',
       CARD,
     )}
   >

@@ -20,7 +20,7 @@ export const SpecView = (): JSX.Element => {
     { label: '포커스 링 · --focus-ring/--bg', ratio: r(palette.fc.hex, palette.bg.hex), required: hc ? 4.5 : 3 },
   ];
   return (
-    <section aria-labelledby="h-spec" className="flex h-full flex-col">
+    <section aria-labelledby="h-spec" className="flex flex-col lg:h-full">
       <div className={cx('mb-5 flex-none', CARD)}>
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
           <h3 className={CARD_TITLE}>대비 실측 — 현재 테마</h3>

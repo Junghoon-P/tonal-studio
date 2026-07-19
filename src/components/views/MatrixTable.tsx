@@ -38,7 +38,7 @@ export const MatrixTable = (): JSX.Element => {
   const min = Math.min(...rows.flatMap((row) => row.cells.map((c) => c.ratio)));
   const allPass = min >= 4.5;
   return (
-    <div className={cx('flex min-h-0 flex-[2_1_0] flex-col', CARD)}>
+    <div className={cx('flex min-h-0 flex-col lg:flex-[2_1_0]', CARD)}>
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
         <h3 className={CARD_TITLE}>전 조합 매트릭스 — 텍스트 × 표면</h3>
         <Chip

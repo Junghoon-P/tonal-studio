@@ -31,8 +31,8 @@ export const CheckView = ({
   onResetOverrides,
 }: CheckViewProps): JSX.Element => (
   <section aria-labelledby="h-check" className="h-full">
-    <div className="flex h-full flex-col gap-5">
-      <div className="flex min-h-0 flex-[3_1_0] flex-wrap items-stretch gap-5">
+    <div className="flex flex-col gap-5 lg:h-full">
+      <div className="flex min-h-0 flex-col gap-5 lg:flex-[3_1_0] lg:flex-row lg:items-stretch">
         <ContrastChecker
           ckFg={ckFg}
           ckBg={ckBg}
