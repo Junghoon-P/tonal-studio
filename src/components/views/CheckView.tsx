@@ -31,17 +31,6 @@ export const CheckView = ({
   onResetOverrides,
 }: CheckViewProps): JSX.Element => (
   <section aria-labelledby="h-check">
-    <div className="mb-5 mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-2">
-      <h2
-        id="h-check"
-        className="m-0 text-[1.375rem] font-bold tracking-[-0.02em] text-tx"
-      >
-        검사
-      </h2>
-      <p className="m-0 text-[0.9375rem] text-tx2">
-        대비는 WCAG 상대 휘도 공식으로 실시간 계산 — 추정값이 아닙니다.
-      </p>
-    </div>
     <div className="flex flex-wrap items-stretch gap-5">
       <ContrastChecker
         ckFg={ckFg}

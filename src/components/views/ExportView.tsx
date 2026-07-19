@@ -101,19 +101,7 @@ export const ExportView = ({
   const code = buildExportCode(tab, { hue, warm, aaa }, override);
   return (
     <section aria-labelledby="h-export">
-      <div className="mb-5 mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-2">
-        <h2
-          id="h-export"
-          className="m-0 text-[1.375rem] font-bold tracking-[-0.02em] text-tx"
-        >
-          내보내기
-        </h2>
-        <p className="m-0 text-[0.9375rem] text-tx2">
-          검증 리포트와 함께, 다크·고대비가 토큰 스왑 하나로 해결되는 코드로
-          출고합니다.
-        </p>
-      </div>
-      <div className="flex flex-wrap items-start gap-5">
+      <div className="flex flex-wrap items-stretch gap-5">
         <div className={cx('min-w-0 flex-[1_1_360px]', CARD)}>
           <h3 className={cx(CARD_TITLE, 'mb-4')}>
             검증 리포트 — WCAG 2.2 · {themeName}
@@ -140,7 +128,7 @@ export const ExportView = ({
             ))}
           </ul>
         </div>
-        <div className={cx('min-w-0 flex-[1.4_1_420px]', CARD)}>
+        <div className={cx('flex min-w-0 flex-[1.4_1_420px] flex-col', CARD)}>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div role="group" aria-label="내보내기 형식" className={SEG_GROUP}>
               {TABS.map(([id, label]) => (
@@ -177,7 +165,7 @@ export const ExportView = ({
               {copied ? '복사됨 ✓' : '클립보드에 복사'}
             </button>
           </div>
-          <pre className="m-0 max-h-[30rem] overflow-auto rounded-[10px] border border-bd bg-sf2 p-4 font-mono text-[0.8125rem] leading-[1.6] text-tx">
+          <pre className="m-0 max-h-[30rem] min-h-0 flex-1 overflow-auto rounded-[10px] border border-bd bg-sf2 p-4 font-mono text-[0.8125rem] leading-[1.6] text-tx">
             <code>{code}</code>
           </pre>
         </div>

@@ -12,6 +12,7 @@ import { Header } from '@/components/Header';
 import { KeyDialog } from '@/components/KeyDialog';
 import { NotesAside } from '@/components/NotesAside';
 import { StudioProvider } from '@/components/StudioContext';
+import { ViewTitle } from '@/components/ViewTitle';
 import { CheckView } from '@/components/views/CheckView';
 import { ExportView } from '@/components/views/ExportView';
 import {
@@ -279,8 +280,10 @@ export const TonalStudio = (): JSX.Element => {
         />
         <main
           id="main"
-          className="mx-auto flex max-w-[1600px] flex-wrap items-start gap-6 px-[clamp(1rem,3vw,2rem)] pb-10 pt-6"
+          className="mx-auto max-w-[1600px] px-[clamp(1rem,3vw,2rem)] pb-10 pt-6"
         >
+          <ViewTitle view={view} />
+          <div className="flex flex-wrap items-start gap-6">
           <div className="min-w-0 flex-[1_1_640px]">
             {view === 'palette' && (
               <PaletteView
@@ -332,6 +335,7 @@ export const TonalStudio = (): JSX.Element => {
             {view === 'spec' && <SpecView />}
           </div>
           {notes && <NotesAside view={view} />}
+          </div>
         </main>
         {keyModal && (
           <KeyDialog

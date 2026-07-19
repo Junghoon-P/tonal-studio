@@ -21,18 +21,6 @@ export const SpecView = (): JSX.Element => {
   ];
   return (
     <section aria-labelledby="h-spec">
-      <div className="mb-5 mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-2">
-        <h2
-          id="h-spec"
-          className="m-0 text-[1.375rem] font-bold tracking-[-0.02em] text-tx"
-        >
-          BYOK — API 키 연결 스펙
-        </h2>
-        <p className="m-0 text-[0.9375rem] text-tx2">
-          키 없이도 툴 전체가 동작합니다. AI만 &quot;잠금 해제 대기&quot; — 아래
-          6개 상태가 전체 여정입니다.
-        </p>
-      </div>
       <div className={cx('mb-5', CARD)}>
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
           <h3 className={CARD_TITLE}>대비 실측 — 현재 테마</h3>

@@ -65,19 +65,7 @@ export const PaletteView = ({
   const { hc, aaa } = useStudio();
   return (
     <section aria-labelledby="h-palette">
-      <div className="mb-5 mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-2">
-        <h2
-          id="h-palette"
-          className="m-0 text-[1.375rem] font-bold tracking-[-0.02em] text-tx"
-        >
-          팔레트 생성
-        </h2>
-        <p className="m-0 text-[0.9375rem] text-tx2">
-          목표 대비를 만족할 때까지 OKLCH 명도를 자동 보정해 토큰을 생성합니다 —
-          검사가 아니라 보장.
-        </p>
-      </div>
-      <div className="flex flex-wrap items-start gap-5">
+      <div className="flex flex-wrap items-stretch gap-5">
         <div className={cx('flex max-w-[340px] flex-[1_1_240px] flex-col gap-5', CARD)}>
           <h3 className={CARD_TITLE}>생성 설정</h3>
           <div>
@@ -170,7 +158,7 @@ export const PaletteView = ({
             aiMsg={aiMsg}
             onRunAI={onRunAI}
           />
-          <p className="m-0 border-t border-bd pt-3.5 text-[0.8125rem] leading-[1.55] text-tx2">
+          <p className="m-0 mt-auto border-t border-bd pt-3.5 text-[0.8125rem] leading-[1.55] text-tx2">
             색상(H)과 채도(C)는 브랜드가 정하고, 명도(L)는 계산이 정합니다. 어떤
             설정에서도 기준 미달 토큰은 생성되지 않습니다.
           </p>
@@ -180,9 +168,7 @@ export const PaletteView = ({
           overriddenKeys={overriddenKeys}
           onResetOverrides={onResetOverrides}
         />
-        <div className="flex max-w-[420px] flex-[1.2_1_300px] flex-col gap-5">
-          <PreviewCard />
-        </div>
+        <PreviewCard />
       </div>
     </section>
   );
