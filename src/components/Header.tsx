@@ -31,9 +31,10 @@ const NAV_ICON: Record<ViewId, string> = {
   spec: ICON_NAV_SPEC,
 };
 
+// 모바일에선 4등분 탭(가운데 정렬), 데스크톱에선 기존 인라인 버튼
 const navClass = (on: boolean): string =>
   cx(
-    'inline-flex items-center gap-2 min-h-11 px-4 rounded-lg border text-[0.9375rem] font-semibold cursor-pointer transition-colors active:scale-[0.985]',
+    'inline-flex flex-1 items-center justify-center gap-2 min-h-11 px-2 rounded-lg border text-[0.875rem] font-semibold cursor-pointer transition-colors active:scale-[0.985] lg:flex-none lg:justify-start lg:px-4 lg:text-[0.9375rem]',
     on
       ? 'bg-sf border-bds text-tx'
       : 'border-transparent bg-transparent text-tx2 hover:text-tx',
@@ -41,7 +42,7 @@ const navClass = (on: boolean): string =>
 
 const tglClass = (on: boolean): string =>
   cx(
-    'inline-flex items-center gap-1.5 min-h-11 px-3.5 rounded-lg border text-[0.875rem] font-semibold cursor-pointer transition-colors active:scale-[0.985]',
+    'inline-flex min-w-11 items-center justify-center gap-1.5 min-h-11 px-3 sm:px-3.5 rounded-lg border text-[0.875rem] font-semibold cursor-pointer transition-colors active:scale-[0.985]',
     on ? 'bg-tx text-bg border-tx' : 'border-bds bg-transparent text-tx2',
   );
 
@@ -90,11 +91,14 @@ export const Header = ({
           — WCAG 대비를 계산으로 보장하는 컬러 토큰 스튜디오
         </span>
       </h1>
-      <span className="border-l border-cbd pl-2.5 text-[0.8125rem] font-medium text-tx3">
+      <span className="hidden border-l border-cbd pl-2.5 text-[0.8125rem] font-medium text-tx3 md:block">
         WCAG 대비를 보장하는 컬러 토큰
       </span>
     </div>
-    <nav aria-label="주 화면" className="flex gap-1">
+    <nav
+      aria-label="주 화면"
+      className="order-last flex w-full gap-1 lg:order-none lg:w-auto"
+    >
       {(Object.keys(VIEW_LABEL) as ViewId[]).map((id) => (
         <button
           key={id}
@@ -103,6 +107,7 @@ export const Header = ({
           onClick={(): void => onView(id)}
           className={navClass(view === id)}
         >
+          {/* 초소형 화면에선 라벨이 잘리지 않도록 아이콘을 숨긴다 */}
           <svg
             width={16}
             height={16}
@@ -113,6 +118,7 @@ export const Header = ({
             strokeLinecap="round"
             strokeLinejoin="round"
             aria-hidden="true"
+            className="hidden min-[480px]:block"
           >
             <path d={NAV_ICON[id]} />
           </svg>
@@ -126,19 +132,19 @@ export const Header = ({
           type="button"
           aria-pressed={!dark}
           onClick={(): void => onDark(false)}
-          className={segClass(!dark)}
+          className={cx(segClass(!dark), 'min-w-11 justify-center')}
         >
           <SmallIcon d={`M8 4.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5z${ICON_SUN}`} />
-          라이트
+          <span className="sr-only sm:not-sr-only">라이트</span>
         </button>
         <button
           type="button"
           aria-pressed={dark}
           onClick={(): void => onDark(true)}
-          className={segClass(dark)}
+          className={cx(segClass(dark), 'min-w-11 justify-center')}
         >
           <SmallIcon d={ICON_MOON} />
-          다크
+          <span className="sr-only sm:not-sr-only">다크</span>
         </button>
       </div>
       <button
@@ -158,7 +164,7 @@ export const Header = ({
           />
           <path d="M8 2.5a5.5 5.5 0 0 1 0 11z" fill="currentColor" />
         </svg>
-        고대비
+        <span className="sr-only sm:not-sr-only">고대비</span>
       </button>
       <button
         type="button"
@@ -167,7 +173,7 @@ export const Header = ({
         className={tglClass(notes)}
       >
         <SmallIcon d={ICON_NOTES} />
-        설계 주석
+        <span className="sr-only sm:not-sr-only">설계 주석</span>
       </button>
     </div>
   </header>
