@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-bg: var(--bg);
+  --color-sf: var(--sf);
+  --color-sf2: var(--sf2);
+  --color-bd: var(--bd);
+  --color-bds: var(--bds);
+  --color-cbd: var(--cbd);
+  --color-tx: var(--tx);
+  --color-tx2: var(--tx2);
+  --color-tx3: var(--tx3);
+  --color-ac: var(--ac);
+  --color-ach: var(--ach);
+  --color-oac: var(--oac);
+  --color-acT: var(--acT);
+  --color-fc: var(--fc);
+  --color-okT: var(--okT);
+  --color-wnT: var(--wnT);
+  --color-dgT: var(--dgT);
+  --color-okS: var(--okS);
+  --color-wnS: var(--wnS);
+  --color-dgS: var(--dgS);
+  --color-okF: var(--okF);
+  --color-wnF: var(--wnF);
+  --color-dgF: var(--dgF);
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, "Segoe UI",
+    "Noto Sans KR", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --animate-tonal-spin: tonal-spin 0.8s linear infinite;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @keyframes tonal-spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: #f6f5f1;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--fc, #4e64c8);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
 }
