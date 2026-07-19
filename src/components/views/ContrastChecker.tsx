@@ -3,14 +3,15 @@
 import type { CSSProperties, JSX } from 'react';
 import { useStudio } from '@/components/StudioContext';
 import { Chip } from '@/components/ui/Chip';
+import { ExpandButton } from '@/components/ui/ExpandButton';
 import {
   BTN_PRIMARY,
   BTN_SECONDARY,
   CARD,
   CARD_TITLE,
   cx,
-  INPUT_BASE,
 } from '@/components/ui/styles';
+import { TokenStepperField } from '@/components/views/TokenStepperField';
 import { contrastRatio, relativeLuminance } from '@/lib/color/contrast';
 import { describeColor } from '@/lib/color/describe';
 import { fitForeground } from '@/lib/color/fit';
@@ -35,34 +36,10 @@ interface ContrastCheckerProps {
   onApplySuggestion: (key: PaletteKey, token: ColorToken) => void;
   overriddenCount: number;
   onResetOverrides: () => void;
+  onExpand?: () => void;
 }
 
 // 결과를 "보여주는" 카드가 아니라 저시력·색각이상 사용자가 직접 "검사하는" 확대 검사기
-const nextKey = (
-  keys: PaletteKey[],
-  current: PaletteKey,
-  dir: 1 | -1,
-): PaletteKey => keys[(keys.indexOf(current) + dir + keys.length) % keys.length];
-
-const STEP_BTN =
-  'inline-flex min-h-11 w-11 flex-none cursor-pointer items-center justify-center rounded-lg border border-bds bg-transparent text-tx2 transition-colors hover:bg-sf2 hover:text-tx';
-
-const Chevron = ({ dir }: { dir: 1 | -1 }): JSX.Element => (
-  <svg
-    width={16}
-    height={16}
-    viewBox="0 0 16 16"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.75}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d={dir === -1 ? 'M10 3 5 8l5 5' : 'M6 3l5 5-5 5'} />
-  </svg>
-);
-
 export const ContrastChecker = ({
   ckFg,
   ckBg,
@@ -72,6 +49,7 @@ export const ContrastChecker = ({
   onApplySuggestion,
   overriddenCount,
   onResetOverrides,
+  onExpand,
 }: ContrastCheckerProps): JSX.Element => {
   const { palette, target, announce } = useStudio();
   // 선택이 바뀌는 즉시 결과를 낭독 — 화면을 보지 않아도 검사가 완결된다
@@ -115,85 +93,33 @@ export const ContrastChecker = ({
     `${tokenLabel(key)}  ${palette[key].hex}`;
   const sampleFilter: CSSProperties =
     sim === 'none' ? {} : { filter: `url(#cvd-${sim})` };
+  // 모달 확대본과 카드 원본이 동시에 렌더되므로 select id 충돌을 피한다
+  const idBase = onExpand ? 'ck' : 'ck-zoom';
   return (
-    <div
-      className={cx(
-        'min-h-0 min-w-0 overflow-y-auto lg:flex-[1.4_1_460px]',
-        CARD,
-      )}
-    >
-      <h3 className={cx(CARD_TITLE, 'mb-4')}>확대 검사기</h3>
+    <div className={cx('min-w-0 lg:flex-[1.4_1_460px]', CARD)}>
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <h3 className={CARD_TITLE}>확대 검사기</h3>
+        {onExpand && <ExpandButton label="확대 검사기" onClick={onExpand} />}
+      </div>
       <div className="flex flex-wrap gap-3">
-        <div className="flex-[1_1_13rem]">
-          <label htmlFor="ck-fg" className="mb-1 block text-[0.875rem] font-semibold text-tx">
-            전경 (텍스트)
-          </label>
-          <div className="flex gap-1">
-            <button
-              type="button"
-              aria-label="이전 전경 토큰"
-              onClick={(): void => changeFg(nextKey(CHECKER_FG_KEYS, ckFg, -1))}
-              className={STEP_BTN}
-            >
-              <Chevron dir={-1} />
-            </button>
-            <select
-              id="ck-fg"
-              value={ckFg}
-              onChange={(e): void => changeFg(e.target.value as PaletteKey)}
-              className={cx(INPUT_BASE, 'min-w-0 flex-1 px-2.5 text-[0.9375rem]')}
-            >
-              {CHECKER_FG_KEYS.map((key) => (
-                <option key={key} value={key}>
-                  {optionLabel(key)}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              aria-label="다음 전경 토큰"
-              onClick={(): void => changeFg(nextKey(CHECKER_FG_KEYS, ckFg, 1))}
-              className={STEP_BTN}
-            >
-              <Chevron dir={1} />
-            </button>
-          </div>
-        </div>
-        <div className="flex-[1_1_13rem]">
-          <label htmlFor="ck-bg" className="mb-1 block text-[0.875rem] font-semibold text-tx">
-            배경 (표면)
-          </label>
-          <div className="flex gap-1">
-            <button
-              type="button"
-              aria-label="이전 배경 토큰"
-              onClick={(): void => changeBg(nextKey(CHECKER_BG_KEYS, ckBg, -1))}
-              className={STEP_BTN}
-            >
-              <Chevron dir={-1} />
-            </button>
-            <select
-              id="ck-bg"
-              value={ckBg}
-              onChange={(e): void => changeBg(e.target.value as PaletteKey)}
-              className={cx(INPUT_BASE, 'min-w-0 flex-1 px-2.5 text-[0.9375rem]')}
-            >
-              {CHECKER_BG_KEYS.map((key) => (
-                <option key={key} value={key}>
-                  {optionLabel(key)}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              aria-label="다음 배경 토큰"
-              onClick={(): void => changeBg(nextKey(CHECKER_BG_KEYS, ckBg, 1))}
-              className={STEP_BTN}
-            >
-              <Chevron dir={1} />
-            </button>
-          </div>
-        </div>
+        <TokenStepperField
+          id={`${idBase}-fg`}
+          label="전경 (텍스트)"
+          shortLabel="전경"
+          keys={CHECKER_FG_KEYS}
+          value={ckFg}
+          onChange={changeFg}
+          optionLabel={optionLabel}
+        />
+        <TokenStepperField
+          id={`${idBase}-bg`}
+          label="배경 (표면)"
+          shortLabel="배경"
+          keys={CHECKER_BG_KEYS}
+          value={ckBg}
+          onChange={changeBg}
+          optionLabel={optionLabel}
+        />
       </div>
       <p className="mb-0 mt-1.5 text-xs text-tx3">
         좌우 버튼으로 토큰을 하나씩 넘기며 검사할 수 있고, 바뀔 때마다 결과가

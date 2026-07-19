@@ -3,6 +3,7 @@
 import type { JSX } from 'react';
 import { useStudio } from '@/components/StudioContext';
 import { Chip, RatioChip } from '@/components/ui/Chip';
+import { ExpandButton } from '@/components/ui/ExpandButton';
 import { CARD, CARD_TITLE, cx, TH_COL } from '@/components/ui/styles';
 import { contrastRatio } from '@/lib/color/contrast';
 import { formatRatio } from '@/lib/color/format';
@@ -24,8 +25,12 @@ export const matrixRequired = (
   return target;
 };
 
+interface MatrixTableProps {
+  onExpand?: () => void;
+}
+
 // 사람이 손으로 못 하는 전 조합 검사를 시스템이 대신한다
-export const MatrixTable = (): JSX.Element => {
+export const MatrixTable = ({ onExpand }: MatrixTableProps): JSX.Element => {
   const { palette, hc, target } = useStudio();
   const rows = MATRIX_FGS.map((fg) => ({
     fg,
@@ -38,13 +43,18 @@ export const MatrixTable = (): JSX.Element => {
   const min = Math.min(...rows.flatMap((row) => row.cells.map((c) => c.ratio)));
   const allPass = min >= 4.5;
   return (
-    <div className={cx('flex min-h-0 flex-col lg:flex-[2_1_0]', CARD)}>
-      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+    <div className={cx('flex min-h-0 flex-col lg:flex-1', CARD)}>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h3 className={CARD_TITLE}>전 조합 매트릭스 — 텍스트 × 표면</h3>
-        <Chip
-          tone={allPass ? 'ok' : 'danger'}
-          text={`21쌍 최저 ${formatRatio(min)}:1`}
-        />
+        <div className="flex items-center gap-2">
+          <Chip
+            tone={allPass ? 'ok' : 'danger'}
+            text={`21쌍 최저 ${formatRatio(min)}:1`}
+          />
+          {onExpand && (
+            <ExpandButton label="전 조합 매트릭스" onClick={onExpand} />
+          )}
+        </div>
       </div>
       <div className="min-h-0 flex-1 overflow-auto">
         <table className="w-full min-w-[34rem] border-collapse">

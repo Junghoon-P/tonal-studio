@@ -24,5 +24,6 @@ export const ICON_NAV_CHECK =
 export const ICON_NAV_EXPORT = 'M8 1.8v8.4M4.6 6.8 8 10.2l3.4-3.4M2.5 13.5h11';
 export const ICON_NAV_SPEC =
   'M4.5 1.75h4.9L12.5 4.85V14.25H4.5zM9.4 1.75v3.1h3.1M6.5 8.2h3.5M6.5 10.9h3.5';
+export const ICON_EXPAND = 'M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9';
 export const ICON_NOTES =
   'M8 2.75h4.25a1 1 0 0 1 1 1v8.5a1 1 0 0 1-1 1H3.75a1 1 0 0 1-1-1V5M6.5 1.5 2 6h4.5z';

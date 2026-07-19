@@ -7,6 +7,7 @@ import {
   type JSX,
   type KeyboardEvent,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { useStudio } from '@/components/StudioContext';
 import { ICON_X } from '@/components/ui/icons';
 import { BTN_SECONDARY } from '@/components/ui/styles';
@@ -55,7 +56,8 @@ export const SwatchZoom = ({
     }
   };
 
-  return (
+  // 영역 확대 모달(zoom 적용) 안에서 열려도 화면 기준으로 뜨도록 body에 포털
+  return createPortal(
     <div
       onClick={onClose}
       className="fixed inset-0 z-[60] flex items-center justify-center bg-[rgba(16,14,12,0.48)] p-4"
@@ -105,6 +107,7 @@ export const SwatchZoom = ({
           닫기
         </button>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
