@@ -241,6 +241,7 @@ export const TonalStudio = (): JSX.Element => {
       value={{ palette, dark, hc, aaa, target, announce: setAnnounce }}
     >
       <div
+        id="tonal-root"
         style={cssVars}
         className="relative flex h-dvh flex-col overflow-hidden bg-bg font-sans text-base leading-normal tracking-[-0.011em] text-tx transition-colors"
       >

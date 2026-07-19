@@ -56,7 +56,8 @@ export const SwatchZoom = ({
     }
   };
 
-  // 영역 확대 모달(zoom 적용) 안에서 열려도 화면 기준으로 뜨도록 body에 포털
+  // 영역 확대 모달(zoom 적용) 안에서 열려도 화면 기준으로 뜨도록 포털.
+  // 색상 토큰 CSS 변수는 앱 루트에 주입되므로 body가 아닌 루트 안으로 옮긴다.
   return createPortal(
     <div
       onClick={onClose}
@@ -108,6 +109,6 @@ export const SwatchZoom = ({
         </button>
       </div>
     </div>,
-    document.body,
+    document.getElementById('tonal-root') ?? document.body,
   );
 };
