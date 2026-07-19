@@ -77,7 +77,7 @@ export const Header = ({
   onToggleHc,
   onToggleNotes,
 }: HeaderProps): JSX.Element => (
-  <header className="sticky top-0 z-20 flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-cbd bg-bg px-[clamp(1rem,3vw,2rem)] py-3 transition-colors">
+  <header className="z-20 flex flex-none flex-wrap items-center gap-x-5 gap-y-3 border-b border-cbd bg-bg px-[clamp(1rem,3vw,2rem)] py-3 transition-colors">
     <div className="mr-2 flex items-center gap-2.5">
       <svg width={24} height={24} viewBox="0 0 24 24" aria-hidden="true">
         <rect width={24} height={24} rx={7} fill="var(--ac)" />

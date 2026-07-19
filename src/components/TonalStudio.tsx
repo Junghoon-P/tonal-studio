@@ -242,7 +242,7 @@ export const TonalStudio = (): JSX.Element => {
     >
       <div
         style={cssVars}
-        className="min-h-screen bg-bg font-sans text-base leading-normal tracking-[-0.011em] text-tx transition-colors"
+        className="flex h-dvh flex-col overflow-hidden bg-bg font-sans text-base leading-normal tracking-[-0.011em] text-tx transition-colors"
       >
         <svg aria-hidden="true" focusable="false" className="absolute h-0 w-0 overflow-hidden">
           <defs>
@@ -278,10 +278,8 @@ export const TonalStudio = (): JSX.Element => {
             setAnnounce(!notes ? '설계 주석 표시' : '설계 주석 숨김');
           }}
         />
-        <main
-          id="main"
-          className="mx-auto max-w-[1600px] px-[clamp(1rem,3vw,2rem)] pb-10 pt-6"
-        >
+        <main id="main" className="min-h-0 flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-[1600px] px-[clamp(1rem,3vw,2rem)] pb-8 pt-6">
           <ViewTitle view={view} />
           <div className="flex flex-wrap items-start gap-6">
           <div className="min-w-0 flex-[1_1_640px]">
@@ -336,6 +334,7 @@ export const TonalStudio = (): JSX.Element => {
           </div>
           {notes && <NotesAside view={view} />}
           </div>
+          </div>
         </main>
         {keyModal && (
           <KeyDialog
@@ -352,7 +351,7 @@ export const TonalStudio = (): JSX.Element => {
             onResetToIdle={apiKey.resetToIdle}
           />
         )}
-        <footer className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-6 gap-y-3 border-t border-bd px-[clamp(1rem,3vw,2rem)] pb-8 pt-4 text-[0.8125rem] text-tx2">
+        <footer className="mx-auto flex w-full max-w-[1600px] flex-none flex-wrap items-center gap-x-6 gap-y-2 border-t border-bd px-[clamp(1rem,3vw,2rem)] py-3 text-[0.8125rem] text-tx2">
           <p className="m-0 flex flex-wrap items-center gap-1.5">
             <kbd className={KBD}>1</kbd>
             <kbd className={KBD}>2</kbd>

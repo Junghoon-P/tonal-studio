@@ -87,7 +87,7 @@ export const NotesAside = ({ view }: { view: ViewId }): JSX.Element => {
   return (
     <aside
       aria-label="설계 주석"
-      className="sticky top-20 flex max-w-[340px] flex-[1_1_260px] flex-col gap-4 rounded-xl border border-dashed border-bds p-5"
+      className="sticky top-0 flex max-w-[340px] flex-[1_1_260px] flex-col gap-4 rounded-xl border border-dashed border-bds p-5"
     >
       <h2 className={CARD_TITLE}>설계 주석 — 왜 이렇게 했나</h2>
       {notesFor(view, target, lGapText).map((note) => (
