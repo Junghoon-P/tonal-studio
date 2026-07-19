@@ -5,7 +5,7 @@ import { useStudio } from '@/components/StudioContext';
 import { AiSuggest } from '@/components/views/AiSuggest';
 import { PreviewCard } from '@/components/views/PreviewCard';
 import { TokenTable } from '@/components/views/TokenTable';
-import { CARD, CARD_TITLE, cx, SEG_BASE, SEG_GROUP, SEG_ON } from '@/components/ui/styles';
+import { CARD, CARD_TITLE, cx, SEG_GROUP, segClass } from '@/components/ui/styles';
 import { hueName } from '@/lib/color/hueName';
 import type { PaletteKey } from '@/lib/color/types';
 import type { KeyErrorKind } from '@/lib/openai/verifyKey';
@@ -31,6 +31,8 @@ interface PaletteViewProps {
   aiMsg: AiMsg | null;
   onRunAI: () => void;
   onInspect: (key: PaletteKey) => void;
+  overriddenKeys: PaletteKey[];
+  onResetOverrides: () => void;
 }
 
 const warmLabel = (warm: number): string => {
@@ -57,6 +59,8 @@ export const PaletteView = ({
   aiMsg,
   onRunAI,
   onInspect,
+  overriddenKeys,
+  onResetOverrides,
 }: PaletteViewProps): JSX.Element => {
   const { hc, aaa } = useStudio();
   return (
@@ -129,9 +133,8 @@ export const PaletteView = ({
                 onClick={(): void => onAaa(false)}
                 disabled={hc}
                 className={cx(
-                  SEG_BASE,
+                  segClass(!aaa && !hc),
                   'flex-1 justify-center',
-                  !aaa && !hc && SEG_ON,
                   hc && 'cursor-not-allowed opacity-50',
                 )}
               >
@@ -143,9 +146,8 @@ export const PaletteView = ({
                 onClick={(): void => onAaa(true)}
                 disabled={hc}
                 className={cx(
-                  SEG_BASE,
+                  segClass(aaa || hc),
                   'flex-1 justify-center',
-                  (aaa || hc) && SEG_ON,
                   hc && 'cursor-not-allowed opacity-50',
                 )}
               >
@@ -173,7 +175,11 @@ export const PaletteView = ({
             설정에서도 기준 미달 토큰은 생성되지 않습니다.
           </p>
         </div>
-        <TokenTable onInspect={onInspect} />
+        <TokenTable
+          onInspect={onInspect}
+          overriddenKeys={overriddenKeys}
+          onResetOverrides={onResetOverrides}
+        />
         <div className="flex max-w-[420px] flex-[1.2_1_300px] flex-col gap-5">
           <PreviewCard />
         </div>

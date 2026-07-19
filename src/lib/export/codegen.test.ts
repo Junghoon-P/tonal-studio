@@ -20,6 +20,18 @@ describe('buildExportCode', () => {
     expect(tw).not.toMatch(/#[0-9A-F]{6}/);
   });
 
+  it('수동 보정 오버라이드는 일치하는 모드 블록에만 반영된다', () => {
+    const css = buildExportCode('css', INPUT, {
+      dark: false,
+      hc: false,
+      tokens: { tx3: { hex: '#123456', L: 0.5, C: 0.01, H: 20 } },
+    });
+    const lightBlock = css.split(':root[data-theme="dark"]')[0];
+    const rest = css.slice(lightBlock.length);
+    expect(lightBlock).toContain('--text-3: #123456;');
+    expect(rest).not.toContain('#123456');
+  });
+
   it('shadcn 탭은 라이트·다크 매핑을 포함한다', () => {
     const sh = buildExportCode('sh', INPUT);
     expect(sh).toContain(':root {');

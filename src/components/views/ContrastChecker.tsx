@@ -3,13 +3,20 @@
 import type { CSSProperties, JSX } from 'react';
 import { useStudio } from '@/components/StudioContext';
 import { Chip } from '@/components/ui/Chip';
-import { CARD, CARD_TITLE, cx, INPUT_BASE } from '@/components/ui/styles';
+import {
+  BTN_PRIMARY,
+  BTN_SECONDARY,
+  CARD,
+  CARD_TITLE,
+  cx,
+  INPUT_BASE,
+} from '@/components/ui/styles';
 import { contrastRatio, relativeLuminance } from '@/lib/color/contrast';
 import { describeColor } from '@/lib/color/describe';
 import { fitForeground } from '@/lib/color/fit';
 import { formatRatio, levelOf } from '@/lib/color/format';
 import { tokenLabel } from '@/lib/color/tokenMeta';
-import type { PaletteKey } from '@/lib/color/types';
+import type { ColorToken, PaletteKey } from '@/lib/color/types';
 import type { SimId } from '@/components/viewTypes';
 
 export const CHECKER_FG_KEYS: PaletteKey[] = [
@@ -25,6 +32,9 @@ interface ContrastCheckerProps {
   onCkFg: (key: PaletteKey) => void;
   onCkBg: (key: PaletteKey) => void;
   sim: SimId;
+  onApplySuggestion: (key: PaletteKey, token: ColorToken) => void;
+  overriddenCount: number;
+  onResetOverrides: () => void;
 }
 
 // 결과를 "보여주는" 카드가 아니라 저시력·색각이상 사용자가 직접 "검사하는" 확대 검사기
@@ -59,6 +69,9 @@ export const ContrastChecker = ({
   onCkFg,
   onCkBg,
   sim,
+  onApplySuggestion,
+  overriddenCount,
+  onResetOverrides,
 }: ContrastCheckerProps): JSX.Element => {
   const { palette, target, announce } = useStudio();
   // 선택이 바뀌는 즉시 결과를 낭독 — 화면을 보지 않아도 검사가 완결된다
@@ -246,6 +259,29 @@ export const ContrastChecker = ({
               {describeColor(suggestion)} — 색상·채도는 유지되어 브랜드가 지켜집니다.
             </span>
           </p>
+          <button
+            type="button"
+            onClick={(): void => onApplySuggestion(ckFg, suggestion)}
+            className={cx(BTN_PRIMARY, 'mt-3 px-4 text-[0.875rem]')}
+          >
+            이 값으로 {tokenLabel(ckFg)} 교체
+          </button>
+          <p className="mb-0 mt-2 text-xs text-tx3">
+            AI가 아닌 결정론적 계산값입니다 — API 키 없이 즉시 적용되고, 적용
+            직후 전체 매트릭스가 재검증됩니다.
+          </p>
+        </div>
+      )}
+      {overriddenCount > 0 && (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-bd pt-3.5">
+          <Chip tone="neutral" text={`수동 보정 ${overriddenCount}건 적용 중`} />
+          <button
+            type="button"
+            onClick={onResetOverrides}
+            className={cx(BTN_SECONDARY, 'px-4 text-[0.875rem]')}
+          >
+            생성값으로 초기화
+          </button>
         </div>
       )}
     </div>

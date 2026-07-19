@@ -10,7 +10,7 @@ import {
   ICON_NOTES,
   ICON_SUN,
 } from '@/components/ui/icons';
-import { cx, SEG_BASE, SEG_GROUP, SEG_ON } from '@/components/ui/styles';
+import { cx, SEG_GROUP, segClass } from '@/components/ui/styles';
 import { VIEW_LABEL, type ViewId } from '@/components/viewTypes';
 
 interface HeaderProps {
@@ -31,13 +31,19 @@ const NAV_ICON: Record<ViewId, string> = {
   spec: ICON_NAV_SPEC,
 };
 
-const NAV_BASE =
-  'inline-flex items-center gap-2 min-h-11 px-4 rounded-lg border border-transparent bg-transparent text-tx2 text-[0.9375rem] font-semibold cursor-pointer transition-colors hover:text-tx active:scale-[0.985]';
-const NAV_ON = 'bg-sf border-bds text-tx';
+const navClass = (on: boolean): string =>
+  cx(
+    'inline-flex items-center gap-2 min-h-11 px-4 rounded-lg border text-[0.9375rem] font-semibold cursor-pointer transition-colors active:scale-[0.985]',
+    on
+      ? 'bg-sf border-bds text-tx'
+      : 'border-transparent bg-transparent text-tx2 hover:text-tx',
+  );
 
-const TGL_BASE =
-  'inline-flex items-center gap-1.5 min-h-11 px-3.5 rounded-lg border border-bds bg-transparent text-tx2 text-[0.875rem] font-semibold cursor-pointer transition-colors active:scale-[0.985]';
-const TGL_ON = 'bg-tx text-bg border-tx';
+const tglClass = (on: boolean): string =>
+  cx(
+    'inline-flex items-center gap-1.5 min-h-11 px-3.5 rounded-lg border text-[0.875rem] font-semibold cursor-pointer transition-colors active:scale-[0.985]',
+    on ? 'bg-tx text-bg border-tx' : 'border-bds bg-transparent text-tx2',
+  );
 
 const SmallIcon = ({
   d,
@@ -95,7 +101,7 @@ export const Header = ({
           type="button"
           aria-current={view === id ? 'page' : undefined}
           onClick={(): void => onView(id)}
-          className={cx(NAV_BASE, view === id && NAV_ON)}
+          className={navClass(view === id)}
         >
           <svg
             width={16}
@@ -120,7 +126,7 @@ export const Header = ({
           type="button"
           aria-pressed={!dark}
           onClick={(): void => onDark(false)}
-          className={cx(SEG_BASE, !dark && SEG_ON)}
+          className={segClass(!dark)}
         >
           <SmallIcon d={`M8 4.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5z${ICON_SUN}`} />
           라이트
@@ -129,7 +135,7 @@ export const Header = ({
           type="button"
           aria-pressed={dark}
           onClick={(): void => onDark(true)}
-          className={cx(SEG_BASE, dark && SEG_ON)}
+          className={segClass(dark)}
         >
           <SmallIcon d={ICON_MOON} />
           다크
@@ -139,7 +145,7 @@ export const Header = ({
         type="button"
         aria-pressed={hc}
         onClick={onToggleHc}
-        className={cx(TGL_BASE, hc && TGL_ON)}
+        className={tglClass(hc)}
       >
         <svg width={15} height={15} viewBox="0 0 16 16" aria-hidden="true">
           <circle
@@ -158,7 +164,7 @@ export const Header = ({
         type="button"
         aria-pressed={notes}
         onClick={onToggleNotes}
-        className={cx(TGL_BASE, notes && TGL_ON)}
+        className={tglClass(notes)}
       >
         <SmallIcon d={ICON_NOTES} />
         설계 주석

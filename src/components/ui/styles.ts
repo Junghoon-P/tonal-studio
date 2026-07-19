@@ -15,10 +15,12 @@ export const BTN_SECONDARY =
 export const SEG_GROUP =
   'flex gap-[0.125rem] p-[0.1875rem] border border-cbd rounded-[10px] bg-sf2';
 
-export const SEG_BASE =
-  'inline-flex items-center gap-1.5 min-h-11 px-3.5 border-0 rounded-lg bg-transparent text-tx2 text-[0.875rem] font-semibold cursor-pointer transition-colors active:scale-[0.985]';
-
-export const SEG_ON = 'bg-sf text-tx shadow-[0_0_0_1px_var(--bds)]';
+// 색상 유틸리티는 겹치면 CSS 순서에 따라 임의로 이기므로, 켬/끔을 한 벌씩만 적용한다
+export const segClass = (on: boolean): string =>
+  cx(
+    'inline-flex items-center gap-1.5 min-h-11 px-3.5 border-0 rounded-lg text-[0.875rem] font-semibold cursor-pointer transition-colors active:scale-[0.985]',
+    on ? 'bg-sf text-tx shadow-[0_0_0_1px_var(--bds)]' : 'bg-transparent text-tx2',
+  );
 
 export const INPUT_BASE =
   'min-h-11 px-3 py-2 border border-bds rounded-lg bg-sf text-tx text-[0.875rem]';

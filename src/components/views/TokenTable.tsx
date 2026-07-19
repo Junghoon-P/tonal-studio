@@ -56,9 +56,15 @@ const buildRows = (p: Palette, hc: boolean, T: number): Row[] => {
 
 interface TokenTableProps {
   onInspect: (key: PaletteKey) => void;
+  overriddenKeys: PaletteKey[];
+  onResetOverrides: () => void;
 }
 
-export const TokenTable = ({ onInspect }: TokenTableProps): JSX.Element => {
+export const TokenTable = ({
+  onInspect,
+  overriddenKeys,
+  onResetOverrides,
+}: TokenTableProps): JSX.Element => {
   const { palette, dark, hc, aaa, target } = useStudio();
   const [zoomKey, setZoomKey] = useState<PaletteKey | null>(null);
   const themeName = `${dark ? '다크' : '라이트'}${hc ? ' · 고대비' : ''}`;
@@ -71,6 +77,21 @@ export const TokenTable = ({ onInspect }: TokenTableProps): JSX.Element => {
           {themeName} · 목표 {targetLabel}
         </span>
       </div>
+      {overriddenKeys.length > 0 && (
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-[10px] border border-bds bg-sf2 px-3 py-2">
+          <Chip
+            tone="neutral"
+            text={`검사기에서 수동 보정 ${overriddenKeys.length}건 적용 중`}
+          />
+          <button
+            type="button"
+            onClick={onResetOverrides}
+            className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-bds bg-transparent px-3.5 text-[0.8125rem] font-semibold text-tx transition-colors hover:bg-sf"
+          >
+            생성값으로 초기화
+          </button>
+        </div>
+      )}
       <div className="overflow-x-auto">
         <table className="w-full min-w-[30rem] border-collapse">
           <caption className="sr-only">
@@ -123,6 +144,11 @@ export const TokenTable = ({ onInspect }: TokenTableProps): JSX.Element => {
                         {palette[row.key].hex}
                       </span>
                     </span>
+                    {overriddenKeys.includes(row.key) && (
+                      <span className="mt-1 block text-xs font-semibold text-tx3">
+                        수동 보정됨
+                      </span>
+                    )}
                   </td>
                   <td className="border-b border-bd py-2 align-top">
                     {row.ratio === null ? (

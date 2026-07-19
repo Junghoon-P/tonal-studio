@@ -1,5 +1,5 @@
 import { buildPalette } from '../color/palette';
-import type { Palette, PaletteKey } from '../color/types';
+import type { ColorToken, Palette, PaletteKey } from '../color/types';
 
 export type ExportTab = 'css' | 'tw' | 'sh';
 
@@ -7,6 +7,13 @@ export interface ExportInput {
   hue: number;
   warm: number;
   aaa: boolean;
+}
+
+// 사용자가 검사기에서 승낙한 수동 보정 — 해당 모드에만 병합된다
+export interface ExportOverride {
+  dark: boolean;
+  hc: boolean;
+  tokens: Partial<Record<PaletteKey, ColorToken>>;
 }
 
 // 내보내기 CSS 변수명 매핑 (디자인 cssNames 그대로)
@@ -38,19 +45,21 @@ const CSS_NAMES: ReadonlyArray<readonly [PaletteKey, string]> = [
 const cssBlock = (p: Palette, pad: string): string =>
   CSS_NAMES.map(([k, n]) => `${pad}--${n}: ${p[k].hex};`).join('\n');
 
-const fourModes = ({
-  hue,
-  warm,
-  aaa,
-}: ExportInput): [Palette, Palette, Palette, Palette] => [
-  buildPalette({ dark: false, hc: false, hue, warm, aaa }),
-  buildPalette({ dark: true, hc: false, hue, warm, aaa }),
-  buildPalette({ dark: false, hc: true, hue, warm, aaa }),
-  buildPalette({ dark: true, hc: true, hue, warm, aaa }),
-];
+const fourModes = (
+  { hue, warm, aaa }: ExportInput,
+  override?: ExportOverride,
+): [Palette, Palette, Palette, Palette] => {
+  const mode = (dark: boolean, hc: boolean): Palette => {
+    const base = buildPalette({ dark, hc, hue, warm, aaa });
+    return override && override.dark === dark && override.hc === hc
+      ? { ...base, ...override.tokens }
+      : base;
+  };
+  return [mode(false, false), mode(true, false), mode(false, true), mode(true, true)];
+};
 
-const buildCssCode = (input: ExportInput): string => {
-  const [l, d, lh, dh] = fourModes(input);
+const buildCssCode = (input: ExportInput, override?: ExportOverride): string => {
+  const [l, d, lh, dh] = fourModes(input, override);
   const target = input.aaa ? 'AAA 7:1' : 'AA 4.5:1';
   return `/* Tonal tokens — 액센트 ${input.hue}° · 목표 ${target}
    모든 값은 WCAG 상대 휘도 계산으로 검증됨 */
@@ -117,8 +126,11 @@ const shadcnVars = (p: Palette): string =>
     `  --ring: ${p.fc.hex};`,
   ].join('\n');
 
-const buildShadcnCode = (input: ExportInput): string => {
-  const [l, d] = fourModes(input);
+const buildShadcnCode = (
+  input: ExportInput,
+  override?: ExportOverride,
+): string => {
+  const [l, d] = fourModes(input, override);
   const level = input.aaa ? 'AAA' : 'AA';
   return `/* shadcn/ui — app/globals.css 매핑 (${level} 검증값) */
 :root {
@@ -130,8 +142,12 @@ ${shadcnVars(d).replace(/^ {2}/gm, '  ')}
 }`;
 };
 
-export const buildExportCode = (tab: ExportTab, input: ExportInput): string => {
-  if (tab === 'css') return buildCssCode(input);
+export const buildExportCode = (
+  tab: ExportTab,
+  input: ExportInput,
+  override?: ExportOverride,
+): string => {
+  if (tab === 'css') return buildCssCode(input, override);
   if (tab === 'tw') return TAILWIND_CODE;
-  return buildShadcnCode(input);
+  return buildShadcnCode(input, override);
 };

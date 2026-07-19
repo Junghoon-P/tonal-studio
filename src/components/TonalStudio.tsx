@@ -14,6 +14,11 @@ import { NotesAside } from '@/components/NotesAside';
 import { StudioProvider } from '@/components/StudioContext';
 import { CheckView } from '@/components/views/CheckView';
 import { ExportView } from '@/components/views/ExportView';
+import {
+  MATRIX_BGS,
+  MATRIX_FGS,
+  matrixRequired,
+} from '@/components/views/MatrixTable';
 import { PaletteView, type AiMsg } from '@/components/views/PaletteView';
 import { SpecView } from '@/components/views/SpecView';
 import {
@@ -26,11 +31,22 @@ import {
 import { useApiKey } from '@/hooks/useApiKey';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useTheme } from '@/hooks/useTheme';
+import { contrastRatio } from '@/lib/color/contrast';
+import { formatRatio } from '@/lib/color/format';
 import { hueName } from '@/lib/color/hueName';
 import { buildPalette } from '@/lib/color/palette';
 import { tokenLabel } from '@/lib/color/tokenMeta';
-import { PALETTE_KEYS, type PaletteKey } from '@/lib/color/types';
-import { buildExportCode, type ExportTab } from '@/lib/export/codegen';
+import {
+  PALETTE_KEYS,
+  type ColorToken,
+  type Palette,
+  type PaletteKey,
+} from '@/lib/color/types';
+import {
+  buildExportCode,
+  type ExportOverride,
+  type ExportTab,
+} from '@/lib/export/codegen';
 import { getStoredKey } from '@/lib/openai/keyStorage';
 import { suggestPalette } from '@/lib/openai/suggestPalette';
 
@@ -43,6 +59,12 @@ const CVD_FILTERS: ReadonlyArray<readonly [string, string]> = [
 
 const KBD =
   'rounded-md border border-bds bg-sf px-[0.4375rem] py-0.5 font-mono text-xs text-tx';
+
+// 검사기에서 승낙한 수동 보정 — 적용 당시 생성 입력과 일치할 때만 유효
+interface TokenOverrides {
+  inputKey: string;
+  tokens: Partial<Record<PaletteKey, ColorToken>>;
+}
 
 export const TonalStudio = (): JSX.Element => {
   const [view, setView] = useState<ViewId>('palette');
@@ -61,13 +83,26 @@ export const TonalStudio = (): JSX.Element => {
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiBusy, setAiBusy] = useState(false);
   const [aiMsg, setAiMsg] = useState<AiMsg | null>(null);
+  const [overrides, setOverrides] = useState<TokenOverrides | null>(null);
   const apiKey = useApiKey();
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const palette = useMemo(
-    () => buildPalette({ dark, hc, hue, warm, aaa }),
-    [dark, hc, hue, warm, aaa],
-  );
+  const inputKey = [dark, hc, hue, warm, aaa].join('|');
+  const overridesActive =
+    overrides !== null && overrides.inputKey === inputKey;
+  const palette = useMemo(() => {
+    const base = buildPalette({ dark, hc, hue, warm, aaa });
+    return overridesActive && overrides
+      ? { ...base, ...overrides.tokens }
+      : base;
+  }, [dark, hc, hue, warm, aaa, overrides, overridesActive]);
+  const overriddenKeys = (
+    overridesActive && overrides ? Object.keys(overrides.tokens) : []
+  ) as PaletteKey[];
+  const exportOverride: ExportOverride | undefined =
+    overridesActive && overrides
+      ? { dark, hc, tokens: overrides.tokens }
+      : undefined;
   const cssVars = useMemo(() => {
     const vars: Record<string, string> = {};
     for (const k of PALETTE_KEYS) vars[`--${k}`] = palette[k].hex;
@@ -97,6 +132,32 @@ export const TonalStudio = (): JSX.Element => {
     onToggleDark: toggleDark,
     onToggleHc: toggleHc,
   });
+
+  // 보정 승낙 — 토큰 교체 후 전체 매트릭스를 즉시 재검증해 결과까지 낭독한다
+  const applySuggestion = (key: PaletteKey, token: ColorToken): void => {
+    const next: Palette = { ...palette, [key]: token };
+    setOverrides((prev) =>
+      prev && prev.inputKey === inputKey
+        ? { inputKey, tokens: { ...prev.tokens, [key]: token } }
+        : { inputKey, tokens: { [key]: token } },
+    );
+    const ratios = MATRIX_FGS.flatMap((f) =>
+      MATRIX_BGS.map((b) => ({
+        ratio: contrastRatio(next[f].hex, next[b].hex),
+        required: matrixRequired(f, hc, target),
+      })),
+    );
+    const min = Math.min(...ratios.map((r) => r.ratio));
+    const fails = ratios.filter((r) => r.ratio < r.required).length;
+    setAnnounce(
+      `${tokenLabel(key)} 토큰을 ${token.hex}로 교체했습니다. 전체 매트릭스 재검증 — 21쌍 최저 ${formatRatio(min)} 대 1, ${fails === 0 ? '전수 통과' : `기준 미달 ${fails}건`}`,
+    );
+  };
+
+  const resetOverrides = (): void => {
+    setOverrides(null);
+    setAnnounce('수동 보정이 초기화되어 생성값으로 복원되었습니다');
+  };
 
   // 토큰 테이블의 "크게 검사" — 해당 토큰을 미리 선택한 채 확대 검사기로 이동
   const inspectToken = (key: PaletteKey): void => {
@@ -162,7 +223,9 @@ export const TonalStudio = (): JSX.Element => {
 
   const copyCode = (): void => {
     try {
-      void navigator.clipboard.writeText(buildExportCode(tab, { hue, warm, aaa }));
+      void navigator.clipboard.writeText(
+        buildExportCode(tab, { hue, warm, aaa }, exportOverride),
+      );
     } catch {
       // 클립보드 미지원 환경 — 코드 블록에서 직접 선택 복사 가능
     }
@@ -238,6 +301,8 @@ export const TonalStudio = (): JSX.Element => {
                 aiMsg={aiMsg}
                 onRunAI={(): void => void runAI()}
                 onInspect={inspectToken}
+                overriddenKeys={overriddenKeys}
+                onResetOverrides={resetOverrides}
               />
             )}
             {view === 'check' && (
@@ -248,6 +313,9 @@ export const TonalStudio = (): JSX.Element => {
                 onCkBg={setCkBg}
                 sim={sim}
                 onSim={setSim}
+                onApplySuggestion={applySuggestion}
+                overriddenCount={overriddenKeys.length}
+                onResetOverrides={resetOverrides}
               />
             )}
             {view === 'export' && (
@@ -258,6 +326,7 @@ export const TonalStudio = (): JSX.Element => {
                 onCopy={copyCode}
                 hue={hue}
                 warm={warm}
+                override={exportOverride}
               />
             )}
             {view === 'spec' && <SpecView />}

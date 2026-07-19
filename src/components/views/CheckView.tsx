@@ -5,7 +5,7 @@ import { ContrastChecker } from '@/components/views/ContrastChecker';
 import { CvdSimulation } from '@/components/views/CvdSimulation';
 import { MatrixTable } from '@/components/views/MatrixTable';
 import type { SimId } from '@/components/viewTypes';
-import type { PaletteKey } from '@/lib/color/types';
+import type { ColorToken, PaletteKey } from '@/lib/color/types';
 
 interface CheckViewProps {
   ckFg: PaletteKey;
@@ -14,6 +14,9 @@ interface CheckViewProps {
   onCkBg: (key: PaletteKey) => void;
   sim: SimId;
   onSim: (sim: SimId) => void;
+  onApplySuggestion: (key: PaletteKey, token: ColorToken) => void;
+  overriddenCount: number;
+  onResetOverrides: () => void;
 }
 
 export const CheckView = ({
@@ -23,6 +26,9 @@ export const CheckView = ({
   onCkBg,
   sim,
   onSim,
+  onApplySuggestion,
+  overriddenCount,
+  onResetOverrides,
 }: CheckViewProps): JSX.Element => (
   <section aria-labelledby="h-check">
     <div className="mb-5 mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-2">
@@ -43,6 +49,9 @@ export const CheckView = ({
         onCkFg={onCkFg}
         onCkBg={onCkBg}
         sim={sim}
+        onApplySuggestion={onApplySuggestion}
+        overriddenCount={overriddenCount}
+        onResetOverrides={onResetOverrides}
       />
       <CvdSimulation sim={sim} onSim={onSim} />
       <MatrixTable />

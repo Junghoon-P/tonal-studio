@@ -7,11 +7,15 @@ import {
   MATRIX_BGS,
   MATRIX_FGS,
 } from '@/components/views/MatrixTable';
-import { CARD, CARD_TITLE, cx, SEG_BASE, SEG_GROUP, SEG_ON } from '@/components/ui/styles';
+import { CARD, CARD_TITLE, cx, SEG_GROUP, segClass } from '@/components/ui/styles';
 import { contrastRatio } from '@/lib/color/contrast';
 import { formatRatio } from '@/lib/color/format';
 import { statusLightnessGap } from '@/lib/color/statusGap';
-import { buildExportCode, type ExportTab } from '@/lib/export/codegen';
+import {
+  buildExportCode,
+  type ExportOverride,
+  type ExportTab,
+} from '@/lib/export/codegen';
 
 interface ExportViewProps {
   tab: ExportTab;
@@ -20,6 +24,7 @@ interface ExportViewProps {
   onCopy: () => void;
   hue: number;
   warm: number;
+  override?: ExportOverride;
 }
 
 interface ReportItem {
@@ -42,6 +47,7 @@ export const ExportView = ({
   onCopy,
   hue,
   warm,
+  override,
 }: ExportViewProps): JSX.Element => {
   const { palette, dark, hc, aaa } = useStudio();
   const ratios = MATRIX_FGS.flatMap((fg) =>
@@ -92,7 +98,7 @@ export const ExportView = ({
       state: 'ok',
     },
   ];
-  const code = buildExportCode(tab, { hue, warm, aaa });
+  const code = buildExportCode(tab, { hue, warm, aaa }, override);
   return (
     <section aria-labelledby="h-export">
       <div className="mb-5 mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-2">
@@ -143,7 +149,7 @@ export const ExportView = ({
                   type="button"
                   aria-pressed={tab === id}
                   onClick={(): void => onTab(id)}
-                  className={cx(SEG_BASE, tab === id && SEG_ON)}
+                  className={segClass(tab === id)}
                 >
                   {label}
                 </button>
