@@ -36,7 +36,7 @@ export const CheckView = ({
         대비는 WCAG 상대 휘도 공식으로 실시간 계산 — 추정값이 아닙니다.
       </p>
     </div>
-    <div className="flex flex-wrap items-start gap-5">
+    <div className="flex flex-wrap items-stretch gap-5">
       <ContrastChecker
         ckFg={ckFg}
         ckBg={ckBg}
