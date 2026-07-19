@@ -7,7 +7,7 @@ import { CARD, CARD_TITLE, cx, INPUT_BASE } from '@/components/ui/styles';
 import { contrastRatio, relativeLuminance } from '@/lib/color/contrast';
 import { describeColor } from '@/lib/color/describe';
 import { fitForeground } from '@/lib/color/fit';
-import { formatRatio } from '@/lib/color/format';
+import { formatRatio, levelOf } from '@/lib/color/format';
 import { tokenLabel } from '@/lib/color/tokenMeta';
 import type { PaletteKey } from '@/lib/color/types';
 import type { SimId } from '@/components/viewTypes';
@@ -28,6 +28,31 @@ interface ContrastCheckerProps {
 }
 
 // 결과를 "보여주는" 카드가 아니라 저시력·색각이상 사용자가 직접 "검사하는" 확대 검사기
+const nextKey = (
+  keys: PaletteKey[],
+  current: PaletteKey,
+  dir: 1 | -1,
+): PaletteKey => keys[(keys.indexOf(current) + dir + keys.length) % keys.length];
+
+const STEP_BTN =
+  'inline-flex min-h-11 w-11 flex-none cursor-pointer items-center justify-center rounded-lg border border-bds bg-transparent text-tx2 transition-colors hover:bg-sf2 hover:text-tx';
+
+const Chevron = ({ dir }: { dir: 1 | -1 }): JSX.Element => (
+  <svg
+    width={16}
+    height={16}
+    viewBox="0 0 16 16"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.75}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d={dir === -1 ? 'M10 3 5 8l5 5' : 'M6 3l5 5-5 5'} />
+  </svg>
+);
+
 export const ContrastChecker = ({
   ckFg,
   ckBg,
@@ -35,7 +60,24 @@ export const ContrastChecker = ({
   onCkBg,
   sim,
 }: ContrastCheckerProps): JSX.Element => {
-  const { palette, target } = useStudio();
+  const { palette, target, announce } = useStudio();
+  // 선택이 바뀌는 즉시 결과를 낭독 — 화면을 보지 않아도 검사가 완결된다
+  const announcePair = (fgKey: PaletteKey, bgKey: PaletteKey): void => {
+    const r = contrastRatio(palette[fgKey].hex, palette[bgKey].hex);
+    const lv = levelOf(r);
+    const verdict = lv === '미달' ? '기준 미달' : `${lv} 수준 통과`;
+    announce(
+      `전경 ${tokenLabel(fgKey)}, ${describeColor(palette[fgKey])}. 배경 ${tokenLabel(bgKey)}. 대비 ${formatRatio(r)} 대 1, ${verdict}`,
+    );
+  };
+  const changeFg = (key: PaletteKey): void => {
+    onCkFg(key);
+    announcePair(key, ckBg);
+  };
+  const changeBg = (key: PaletteKey): void => {
+    onCkBg(key);
+    announcePair(ckFg, key);
+  };
   const fg = palette[ckFg];
   const bg = palette[ckBg];
   const ratio = contrastRatio(fg.hex, bg.hex);
@@ -64,41 +106,81 @@ export const ContrastChecker = ({
     <div className={cx('min-w-0 flex-[1.4_1_460px]', CARD)}>
       <h3 className={cx(CARD_TITLE, 'mb-4')}>확대 검사기</h3>
       <div className="flex flex-wrap gap-3">
-        <div className="flex-[1_1_10rem]">
-          <label htmlFor="ck-fg" className="mb-1 block text-[0.8125rem] font-semibold text-tx">
+        <div className="flex-[1_1_13rem]">
+          <label htmlFor="ck-fg" className="mb-1 block text-[0.875rem] font-semibold text-tx">
             전경 (텍스트)
           </label>
-          <select
-            id="ck-fg"
-            value={ckFg}
-            onChange={(e): void => onCkFg(e.target.value as PaletteKey)}
-            className={cx(INPUT_BASE, 'w-full px-2.5')}
-          >
-            {CHECKER_FG_KEYS.map((key) => (
-              <option key={key} value={key}>
-                {optionLabel(key)}
-              </option>
-            ))}
-          </select>
+          <div className="flex gap-1">
+            <button
+              type="button"
+              aria-label="이전 전경 토큰"
+              onClick={(): void => changeFg(nextKey(CHECKER_FG_KEYS, ckFg, -1))}
+              className={STEP_BTN}
+            >
+              <Chevron dir={-1} />
+            </button>
+            <select
+              id="ck-fg"
+              value={ckFg}
+              onChange={(e): void => changeFg(e.target.value as PaletteKey)}
+              className={cx(INPUT_BASE, 'min-w-0 flex-1 px-2.5 text-[0.9375rem]')}
+            >
+              {CHECKER_FG_KEYS.map((key) => (
+                <option key={key} value={key}>
+                  {optionLabel(key)}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              aria-label="다음 전경 토큰"
+              onClick={(): void => changeFg(nextKey(CHECKER_FG_KEYS, ckFg, 1))}
+              className={STEP_BTN}
+            >
+              <Chevron dir={1} />
+            </button>
+          </div>
         </div>
-        <div className="flex-[1_1_10rem]">
-          <label htmlFor="ck-bg" className="mb-1 block text-[0.8125rem] font-semibold text-tx">
+        <div className="flex-[1_1_13rem]">
+          <label htmlFor="ck-bg" className="mb-1 block text-[0.875rem] font-semibold text-tx">
             배경 (표면)
           </label>
-          <select
-            id="ck-bg"
-            value={ckBg}
-            onChange={(e): void => onCkBg(e.target.value as PaletteKey)}
-            className={cx(INPUT_BASE, 'w-full px-2.5')}
-          >
-            {CHECKER_BG_KEYS.map((key) => (
-              <option key={key} value={key}>
-                {optionLabel(key)}
-              </option>
-            ))}
-          </select>
+          <div className="flex gap-1">
+            <button
+              type="button"
+              aria-label="이전 배경 토큰"
+              onClick={(): void => changeBg(nextKey(CHECKER_BG_KEYS, ckBg, -1))}
+              className={STEP_BTN}
+            >
+              <Chevron dir={-1} />
+            </button>
+            <select
+              id="ck-bg"
+              value={ckBg}
+              onChange={(e): void => changeBg(e.target.value as PaletteKey)}
+              className={cx(INPUT_BASE, 'min-w-0 flex-1 px-2.5 text-[0.9375rem]')}
+            >
+              {CHECKER_BG_KEYS.map((key) => (
+                <option key={key} value={key}>
+                  {optionLabel(key)}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              aria-label="다음 배경 토큰"
+              onClick={(): void => changeBg(nextKey(CHECKER_BG_KEYS, ckBg, 1))}
+              className={STEP_BTN}
+            >
+              <Chevron dir={1} />
+            </button>
+          </div>
         </div>
       </div>
+      <p className="mb-0 mt-1.5 text-xs text-tx3">
+        좌우 버튼으로 토큰을 하나씩 넘기며 검사할 수 있고, 바뀔 때마다 결과가
+        낭독됩니다.
+      </p>
       <div
         aria-hidden="true"
         className="mt-4 flex flex-col gap-2 rounded-[10px] border border-bd p-6"

@@ -18,7 +18,10 @@ const RootLayout = ({
         href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
       />
     </head>
-    <body className="antialiased">{children}</body>
+    {/* 브라우저 확장이 body에 주입하는 속성(cz-shortcut-listen 등)의 하이드레이션 경고 억제 */}
+    <body className="antialiased" suppressHydrationWarning>
+      {children}
+    </body>
   </html>
 );
 
